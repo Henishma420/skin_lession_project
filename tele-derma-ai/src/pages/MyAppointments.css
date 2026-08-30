@@ -1,0 +1,868 @@
+/* ==========================================================================
+   MY APPOINTMENTS DASHBOARD STYLING
+   ========================================================================== */
+
+/* Summary Stats Grid */
+.stats-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-card svg {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.76rem;
+  color: #7f8c8d;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 0.2rem;
+}
+
+.stat-val {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+/* Page Section headers */
+.appointments-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 2.5rem;
+}
+
+.appointments-section h2 {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Empty states */
+.empty-appointments-box {
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.empty-sub-section {
+  padding: 2.5rem;
+  text-align: center;
+  color: #a0aec0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Upcoming Appointment Cards Grid
+   -------------------------------------------------------------------------- */
+.appointments-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.appt-card {
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.25s ease;
+}
+
+.appt-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0, 210, 255, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.appt-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.doctor-meta-block {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.doctor-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 210, 255, 0.1);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00d2ff;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.doctor-meta-block h3 {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.doc-specialty {
+  color: #7f8c8d;
+  font-size: 0.78rem;
+}
+
+/* Appt details body */
+.appt-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.appt-timing-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.timing-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.86rem;
+  color: #cbd5e0;
+}
+
+.timing-item svg {
+  font-size: 0.95rem;
+}
+
+.appt-symptoms-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  background: rgba(255, 255, 255, 0.01);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.appt-symptoms-box svg {
+  font-size: 1rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.appt-symptoms-box strong {
+  display: block;
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
+}
+
+.appt-symptoms-box p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #e2e8f0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.appt-id-badge {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+}
+
+.appt-id-badge strong {
+  color: #a0aec0;
+}
+
+/* Card Buttons */
+.appt-card-footer {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.appt-card-footer button {
+  flex: 1;
+}
+
+.btn-outline-small {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e0;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn-outline-small:hover {
+  background: rgba(0, 210, 255, 0.08);
+  color: #00d2ff;
+  border-color: rgba(0, 210, 255, 0.25);
+}
+
+.btn-danger-small {
+  background: rgba(235, 77, 75, 0.08);
+  border: 1px solid rgba(235, 77, 75, 0.2);
+  color: #ff4757;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger-small:hover {
+  background: rgba(235, 77, 75, 0.15);
+  border-color: rgba(235, 77, 75, 0.35);
+  color: #ff6b81;
+}
+
+/* --------------------------------------------------------------------------
+   History List Table Styling
+   -------------------------------------------------------------------------- */
+.history-section-wrapper {
+  margin-top: 1rem;
+}
+
+.history-filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.filter-tab {
+  background: transparent;
+  border: none;
+  color: #7f8c8d;
+  padding: 0.5rem 1rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.filter-tab:hover {
+  color: #fff;
+}
+
+.filter-tab.active {
+  color: #00d2ff;
+}
+
+.filter-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #00d2ff;
+  border-radius: 4px;
+}
+
+.history-table-container {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.86rem;
+}
+
+.history-table th {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem 1.5rem;
+  color: #7f8c8d;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.history-table td {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  color: #cbd5e0;
+  vertical-align: middle;
+}
+
+.history-table tr:last-child td {
+  border-bottom: none;
+}
+
+.history-table tr:hover td {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.table-doc-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.table-doc-icon {
+  font-size: 1.1rem;
+  color: #a0aec0;
+}
+
+.table-symptoms {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.appt-id-code {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  color: #8899ad;
+  font-family: monospace;
+}
+
+.btn-view-link {
+  background: transparent;
+  border: none;
+  color: #00d2ff;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.86rem;
+  transition: opacity 0.2s ease;
+}
+
+.btn-view-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   Modal Overlays
+   -------------------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 500px;
+  padding: 2.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+  background: #0d1220;
+}
+
+.modal-content h3 {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+
+.modal-content p {
+  color: #cbd5e0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: flex-end;
+  margin-top: 1.8rem;
+}
+
+.error-alert-box {
+  background: rgba(235, 77, 75, 0.1);
+  border: 1px solid rgba(235, 77, 75, 0.2);
+  color: #ff4757;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  font-size: 0.84rem;
+  margin-bottom: 1.2rem;
+}
+
+.cancel-note {
+  font-size: 0.8rem !important;
+  color: #7f8c8d !important;
+  margin-top: 0.6rem;
+}
+
+/* Form layouts in modals */
+.form-group-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.form-group-custom label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group-custom input[type="date"] {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.form-group-custom input[type="date"]:focus {
+  border-color: #00d2ff;
+}
+
+/* --------------------------------------------------------------------------
+   Appointment Details Page Styling
+   -------------------------------------------------------------------------- */
+.detail-page-wrapper {
+  padding-top: 1rem;
+}
+
+.appointment-full-details-card {
+  padding: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.details-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.details-card-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #fff;
+  font-weight: 700;
+}
+
+.details-appt-id {
+  display: block;
+  font-size: 0.82rem;
+  color: #7f8c8d;
+  margin-bottom: 0.2rem;
+}
+
+.details-grid-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.8rem 1.5rem;
+}
+
+.detail-row-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.detail-row-item svg {
+  font-size: 1.3rem;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.detail-row-item .detail-label {
+  display: block;
+  font-size: 0.72rem;
+  color: #7f8c8d;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
+}
+
+.detail-row-item .detail-value {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.full-width-row {
+  grid-column: 1 / -1;
+}
+
+.text-wrap-symptoms {
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Doctor Info Subpanel */
+.doctor-info-subpanel {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 1.8rem;
+  margin-top: 0.5rem;
+}
+
+.doctor-info-subpanel h3 {
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  font-size: 1.15rem;
+  color: #fff;
+  border-left: 3px solid #00d2ff;
+  padding-left: 0.8rem;
+  font-weight: 700;
+}
+
+.doc-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.5rem;
+}
+
+.doc-panel-item {
+  font-size: 0.86rem;
+  color: #cbd5e0;
+}
+
+.doc-panel-item strong {
+  color: #7f8c8d;
+  margin-right: 0.4rem;
+  font-weight: 600;
+}
+
+.full-width-panel-item {
+  grid-column: 1 / -1;
+}
+
+/* Actions Footer */
+.details-actions-footer {
+  display: flex;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1.8rem;
+  margin-top: 0.5rem;
+}
+
+.details-actions-footer button {
+  flex: 1;
+}
+
+.completed-actions-panel {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.report-unavailable-text {
+  font-size: 0.86rem;
+  color: #7f8c8d;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+}
+
+/* ==========================================================================
+   RESPONSIVENESS
+   ========================================================================== */
+@media (max-width: 768px) {
+  .stats-summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .history-table th:nth-child(4),
+  .history-table td:nth-child(4),
+  .history-table th:nth-child(6),
+  .history-table td:nth-child(6) {
+    display: none; /* Hide symptoms & ID on small tablets */
+  }
+}
+
+@media (max-width: 500px) {
+  .stats-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .appt-card-footer {
+    flex-direction: column;
+  }
+  
+  .history-table th:nth-child(3),
+  .history-table td:nth-child(3) {
+    display: none; /* Hide time on mobile */
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+/* Doctor Details layout styling */
+.doctor-details-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 2rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.details-left-pane,
+.details-right-pane {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-demographics-card,
+.patient-screening-history-card,
+.consultation-notes-editor-card {
+  padding: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.patient-demographics-card h3,
+.patient-screening-history-card h3,
+.consultation-notes-editor-card h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 0.8rem;
+}
+
+.demographics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.2rem;
+}
+
+.demo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.demo-item .demo-lbl {
+  font-size: 0.68rem;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.demo-item .demo-val {
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Scans list */
+.mini-scans-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mini-scan-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  gap: 1rem;
+}
+
+.mini-scan-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.mini-scan-meta strong {
+  font-size: 0.86rem;
+  color: #fff;
+}
+
+.mini-scan-meta span {
+  font-size: 0.76rem;
+  color: #7f8c8d;
+}
+
+.mini-scan-actions {
+  flex-shrink: 0;
+}
+
+/* Notes Form */
+.notes-editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.notes-editor-form textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: #111625;
+  border: 1px solid var(--dark-border);
+  color: #fff;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  transition: var(--transition-smooth);
+}
+
+.notes-editor-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.notes-actions-footer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.notes-actions-footer button {
+  flex: 1;
+}
+
+/* Completed Display */
+.notes-display-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.completed-notes-badge {
+  background: rgba(46, 213, 115, 0.08);
+  border: 1px solid rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  font-size: 0.86rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+.notes-display-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.notes-display-field .lbl {
+  font-size: 0.68rem;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.notes-display-field .val {
+  font-size: 0.88rem;
+  color: #cbd5e0;
+  margin: 0;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.notes-display-field .val.highlight-val {
+  color: #fff;
+  font-weight: 600;
+}
+
+.notes-display-field .val.code-font {
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.8rem 1rem;
+  border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+  .doctor-details-grid {
+    grid-template-columns: 1fr;
+  }
+}

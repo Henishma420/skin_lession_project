@@ -1,0 +1,571 @@
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Header profile dashboard styling */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.5rem;
+}
+
+.profile-greeting {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.user-avatar-icon {
+  font-size: 3.5rem;
+  color: var(--primary);
+  opacity: 0.85;
+}
+
+.profile-greeting h1 {
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+
+.user-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid rgba(0, 210, 255, 0.15);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.8rem;
+  border-radius: 50px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.stat-pill {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--dark-border);
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--border-radius-sm);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .profile-stats {
+    width: 100%;
+  }
+  .stat-pill {
+    flex: 1;
+  }
+}
+
+/* Cards styling */
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.card-header-icon {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+}
+
+.card-header-icon svg {
+  font-size: 1.8rem;
+}
+
+.card-header-icon h2 {
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.card-body-content {
+  flex: 1;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+/* Lists and Data items */
+.data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 1rem 1.2rem;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-smooth);
+}
+
+.data-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(0, 210, 255, 0.15);
+}
+
+.data-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.data-title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.data-meta {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.data-date {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.data-timing {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.view-more-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  padding: 0.5rem;
+}
+
+.view-more-link:hover {
+  color: var(--primary);
+}
+
+.bg-accent-light {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+/* Doctor special styling */
+.doctor-dashboard-actions {
+  padding: 2rem;
+}
+
+.doctor-alert {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  color: var(--text-primary);
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9rem;
+}
+
+.doctor-alert svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.doctor-alert p b {
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard Appointment Widget Panel Styles
+   -------------------------------------------------------------------------- */
+.dashboard-appt-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.nearest-appt-wrapper {
+  width: 100%;
+}
+
+.nearest-appt-details-card {
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 210, 255, 0.15) !important;
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.03) 0%, rgba(0, 0, 0, 0) 100%) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.appt-card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.appt-section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #00d2ff;
+}
+
+.doc-summary-line {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.doc-icon-blue {
+  font-size: 1.8rem;
+  color: #00d2ff;
+  background: rgba(0, 210, 255, 0.05);
+  padding: 0.4rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 210, 255, 0.15);
+}
+
+.doc-summary-line h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.doc-specialization-text {
+  font-size: 0.78rem;
+  color: #7f8c8d;
+}
+
+.appt-time-info {
+  display: flex;
+  gap: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.time-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: #cbd5e0;
+}
+
+.time-info-item svg {
+  color: #00d2ff;
+  font-size: 0.9rem;
+}
+
+.appt-symptoms-summary {
+  font-size: 0.84rem;
+  color: #a0aec0;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.appt-symptoms-summary strong {
+  color: #7f8c8d;
+}
+
+/* Dashboard Summary Card styling */
+.dashboard-appt-summary-card {
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.dashboard-appt-summary-card h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 700;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.86rem;
+  color: #cbd5e0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.summary-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 20px;
+  min-width: 28px;
+  text-align: center;
+}
+
+.bg-blue {
+  background: rgba(0, 210, 255, 0.1);
+  color: #00d2ff;
+  border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.bg-green {
+  background: rgba(46, 213, 115, 0.1);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.2);
+}
+
+.bg-red {
+  background: rgba(235, 77, 75, 0.1);
+  color: #ff4757;
+  border: 1px solid rgba(235, 77, 75, 0.2);
+}
+
+/* Doctor Dashboard Specific Styles */
+.text-yellow {
+  color: #ffa502 !important;
+}
+
+.text-green {
+  color: #2ed573 !important;
+}
+
+.doctor-today-list,
+.priority-reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.today-appt-card,
+.priority-report-card {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: var(--transition-smooth);
+}
+
+.today-appt-card:hover,
+.priority-report-card:hover {
+  transform: translateY(-2px);
+}
+
+.today-appt-header,
+.priority-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.time-badge {
+  background: rgba(0, 210, 255, 0.08);
+  color: var(--primary);
+  border: 1px solid rgba(0, 210, 255, 0.15);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.patient-summary strong {
+  display: block;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.patient-summary span {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.symptoms-summary-line,
+.priority-card-body {
+  font-size: 0.82rem;
+  color: #cbd5e0;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.symptoms-summary-line strong {
+  color: #7f8c8d;
+}
+
+/* Priority Card Alert styling */
+.border-red {
+  border: 1px solid rgba(255, 71, 87, 0.2) !important;
+  background: rgba(255, 71, 87, 0.02) !important;
+}
+
+.p-card-badge {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.2);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  letter-spacing: 0.4px;
+}
+
+.p-card-date {
+  font-size: 0.76rem;
+  color: #7f8c8d;
+}
+
+.priority-card-body h4 {
+  margin: 0.4rem 0 0.2rem 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.confidence-level-line {
+  font-size: 0.78rem;
+  color: #7f8c8d;
+  margin-top: 0.2rem;
+}
+
+.confidence-level-line strong {
+  color: #ff4757;
+}
+
+.priority-warning-tag {
+  background: rgba(255, 165, 2, 0.08);
+  border: 1px solid rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+  padding: 0.8rem 1rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.3;
+}
+
+/* Recent Activity Timeline Feed */
+.activity-feed-timeline {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  padding-left: 0.5rem;
+}
+
+.timeline-activity-item {
+  display: flex;
+  gap: 1.2rem;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.timeline-activity-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-activity-item::after {
+  content: '';
+  position: absolute;
+  left: 4.5px;
+  top: 10px;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.timeline-activity-item:last-child::after {
+  display: none;
+}
+
+.activity-bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--dark-bg);
+  z-index: 1;
+  margin-top: 4px;
+}
+
+.activity-details p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #cbd5e0;
+}
+
+.activity-time-stamp {
+  font-size: 0.74rem;
+  color: #7f8c8d;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+

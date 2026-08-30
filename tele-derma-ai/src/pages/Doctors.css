@@ -1,0 +1,96 @@
+.doctors-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.doctor-card {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.doctor-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--dark-border);
+  padding-bottom: 1.2rem;
+}
+
+.doctor-avatar-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.doctor-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.doctor-meta h3 {
+  color: #fff;
+  font-size: 1.25rem;
+}
+
+.doc-specialty {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.doc-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--warning);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.star-icon {
+  font-size: 0.95rem;
+}
+
+/* Details and Tags */
+.doctor-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex-grow: 1;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.detail-item svg {
+  color: var(--primary);
+}
+
+.doc-availability-tag {
+  align-self: flex-start;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--success);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
