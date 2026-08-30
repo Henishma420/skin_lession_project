@@ -11,10 +11,12 @@ const AIAnalysis = () => {
 
   // States
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState(null);
   const [emergencyActive, setEmergencyActive] = useState(false);
+  const [analysisError, setAnalysisError] = useState('');
 
   // Pre-loaded samples to make testing easy
   const samples = [
@@ -45,28 +47,31 @@ const AIAnalysis = () => {
   ];
 
   const handleSelectSample = (sample) => {
+    setSelectedFile(null);
     setSelectedImage(sample);
     setImagePreview(sample.url);
     setResult(null);
     setEmergencyActive(false);
+    setAnalysisError('');
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedImage({
           name: file.name,
           url: reader.result,
-          // Generate pseudo random result for custom upload
-          prediction: Math.random() > 0.5 ? 'Benign Nevus' : 'Melanoma (High Risk)',
-          confidence: Math.round(75 + Math.random() * 20),
+          prediction: 'Waiting for model...',
+          confidence: 0,
           type: 'normal'
         });
         setImagePreview(reader.result);
         setResult(null);
         setEmergencyActive(false);
+        setAnalysisError('');
       };
       reader.readAsDataURL(file);
     }
@@ -76,59 +81,88 @@ const AIAnalysis = () => {
     if (!selectedImage) return;
 
     setScanning(true);
-    
-    // Simulate AI scan delay of 2.5 seconds
-    setTimeout(async () => {
-      setScanning(false);
-      
-      const isLowConfidence = selectedImage.confidence < 50 || selectedImage.type === 'unknown';
 
-      if (isLowConfidence) {
-        setEmergencyActive(true);
-        setResult(null);
-      } else {
-        setResult({
-          prediction: selectedImage.prediction,
-          confidence: selectedImage.confidence
-        });
+    try {
+      const formData = new FormData();
 
-        // Save analysis to MySQL database via backend Express route
-        try {
-          const isMel = selectedImage.prediction.toLowerCase().includes('melanoma');
-          const reportData = {
-            symptoms: ['Skin spot showing changes in color or borders.'],
-            aiSummary: `The AI screening model detected pattern attributes associated with ${selectedImage.prediction}. Assessed with ${selectedImage.confidence}% model certainty.`,
-            detectedFeatures: [
-              'Color variegation visible.',
-              isMel ? 'Asymmetric structural distribution.' : 'Regular border outlines.'
-            ],
-            abcdeAssessment: {
-              asymmetry: isMel ? 'Significant asymmetry detected.' : 'Symmetric structure.',
-              border: isMel ? 'Irregular, poorly defined margins.' : 'Sharp, distinct border margins.',
-              color: isMel ? 'Multiple shades of brown/black visible.' : 'Uniform coloration.',
-              diameter: 'Diameter within evaluated margins.',
-              evolution: 'Evolution cannot be determined from a single scan.'
-            },
-            recommendations: [
-              'Consider evaluation by a qualified dermatologist.',
-              'Professional examination (dermoscopy) may be appropriate.',
-              'Continue regular skin self-monitoring using the ABCDE screening aid.'
-            ],
-            appointmentId: null
-          };
-
-          await axios.post(`${API_URL}/analyses`, {
-            prediction: selectedImage.prediction,
-            confidence: selectedImage.confidence,
-            imageUrl: selectedImage.url,
-            gradCamUrl: selectedImage.gradCamUrl || selectedImage.url,
-            reportData: reportData
-          });
-        } catch (error) {
-          console.error('Failed to save AI scan in MySQL database:', error);
+      if (selectedFile) {
+        formData.append('image', selectedFile);
+      } else if (selectedImage?.url) {
+        const isPublicAsset = typeof selectedImage.url === 'string' && selectedImage.url.startsWith('/');
+        if (isPublicAsset) {
+          formData.append('imageUrl', selectedImage.url);
         }
       }
-    }, 2500);
+
+      const response = await axios.post(`${API_URL}/analyze-skin`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      const predictedLabel = response.data.label || 'Unknown Lesion';
+      const confidence = Number(response.data.confidence || 0);
+      const modelPrediction = predictedLabel.includes('Melanoma') ? 'Melanoma (High Risk)' : predictedLabel;
+
+      const isLowConfidence = confidence < 50 || predictedLabel.toLowerCase().includes('unknown');
+
+      if (isLowConfidence) {
+        setResult(null);
+        setEmergencyActive(true);
+        setAnalysisError('The model returned low confidence for this image. Please try a clearer close-up photo with better lighting.');
+        return;
+      }
+
+      const modelResult = {
+        prediction: modelPrediction,
+        confidence
+      };
+
+      setResult(modelResult);
+      setEmergencyActive(false);
+      setAnalysisError('');
+
+      const isMel = modelPrediction.toLowerCase().includes('melanoma');
+      const reportData = {
+        symptoms: ['Skin spot showing changes in color or borders.'],
+        aiSummary: `The AI screening model detected pattern attributes associated with ${modelPrediction}. Assessed with ${confidence.toFixed(1)}% model certainty.`,
+        detectedFeatures: [
+          'Color variegation visible.',
+          isMel ? 'Asymmetric structural distribution.' : 'Regular border outlines.'
+        ],
+        abcdeAssessment: {
+          asymmetry: isMel ? 'Significant asymmetry detected.' : 'Symmetric structure.',
+          border: isMel ? 'Irregular, poorly defined margins.' : 'Sharp, distinct border margins.',
+          color: isMel ? 'Multiple shades of brown/black visible.' : 'Uniform coloration.',
+          diameter: 'Diameter within evaluated margins.',
+          evolution: 'Evolution cannot be determined from a single scan.'
+        },
+        recommendations: [
+          'Consider evaluation by a qualified dermatologist.',
+          'Professional examination (dermoscopy) may be appropriate.',
+          'Continue regular skin self-monitoring using the ABCDE screening aid.'
+        ],
+        appointmentId: null
+      };
+
+      const saveImageUrl = selectedFile ? selectedFile.name : (selectedImage?.url?.startsWith('/images/') ? selectedImage.url : '');
+
+      await axios.post(`${API_URL}/analyses`, {
+        prediction: modelPrediction,
+        confidence,
+        imageUrl: saveImageUrl,
+        gradCamUrl: selectedImage?.gradCamUrl || saveImageUrl,
+        reportData: reportData
+      });
+    } catch (error) {
+      console.error('Failed to analyze lesion with model:', error);
+      const backendMessage = error.response?.data?.message || 'The model could not classify this image right now.';
+      setAnalysisError(backendMessage);
+      setEmergencyActive(true);
+      setResult(null);
+    } finally {
+      setScanning(false);
+    }
   };
 
   return (
@@ -267,8 +301,7 @@ const AIAnalysis = () => {
                 <h3>Low Confidence Classification</h3>
               </div>
               <p className="emergency-body">
-                The AI could not confidently classify this lesion. It might be due to camera lighting, 
-                obstruction, or an unknown lesion type. 
+                {analysisError || 'The AI could not confidently classify this lesion. It might be due to camera lighting, obstruction, or an unknown lesion type.'}
               </p>
               <div className="emergency-warning-banner">
                 ⚠️ Please consult a dermatologist immediately for expert evaluation.

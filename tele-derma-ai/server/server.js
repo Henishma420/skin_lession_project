@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
+const { execFile } = require('child_process');
 const db = require('./db');
 const authRouter = require('./routes/auth');
 const { authMiddleware } = require('./routes/auth');
@@ -11,12 +15,108 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const skinLabelMap = {
+  akiec: 'Actinic Keratosis',
+  bcc: 'Basal Cell Carcinoma',
+  bkl: 'Benign Keratosis',
+  df: 'Dermatofibroma',
+  mel: 'Melanoma',
+  nv: 'Melanocytic Nevus',
+  vasc: 'Vascular Lesion'
+};
+
+const formatSkinLabel = (label = '') => {
+  const normalized = label.toString().trim().toLowerCase();
+  return skinLabelMap[normalized] || label || 'Unknown Lesion';
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const extension = path.extname(file.originalname) || '.png';
+    cb(null, `skin-${uniqueSuffix}${extension}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024
+  },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Only image files are allowed.'));
+    }
+    cb(null, true);
+  }
+});
+
+const pythonExecutable = process.env.PYTHON_BIN || 'C:/Python313/python.exe';
+
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // Routes
 app.use('/api/auth', authRouter);
+
+app.post('/api/analyze-skin', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file && !req.body.imageUrl) {
+      return res.status(400).json({ message: 'Please upload a lesion image.' });
+    }
+
+    let imagePath = req.file ? req.file.path : null;
+
+    if (!imagePath && req.body.imageUrl) {
+      const relativeImagePath = req.body.imageUrl.startsWith('/') ? req.body.imageUrl.slice(1) : req.body.imageUrl;
+      imagePath = path.join(__dirname, '..', 'public', relativeImagePath);
+    }
+
+    if (!imagePath || !fs.existsSync(imagePath)) {
+      return res.status(400).json({ message: 'Image file not found for analysis.' });
+    }
+
+    const pythonScript = path.join(__dirname, 'skin_model_inference.py');
+
+    execFile(pythonExecutable, [pythonScript, imagePath], { timeout: 180000 }, (error, stdout, stderr) => {
+      if (error) {
+        console.error('Skin model inference failed:', stderr || error.message);
+        return res.status(500).json({
+          message: 'Model analysis failed. Please make sure the Python environment has transformers and torch installed.',
+          details: stderr || error.message
+        });
+      }
+
+      try {
+        const result = JSON.parse(stdout.trim());
+        const normalizedConfidence = Number(result.confidence || 0) * 100;
+
+        return res.json({
+          label: formatSkinLabel(result.label),
+          rawLabel: result.label,
+          confidence: Number(normalizedConfidence.toFixed(2))
+        });
+      } catch (parseError) {
+        console.error('Failed to parse model output:', stdout, stderr);
+        return res.status(500).json({
+          message: 'Model returned an unexpected response.',
+          details: stdout || stderr
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error analyzing lesion image:', error);
+    res.status(500).json({ message: 'Server error while analyzing lesion image.' });
+  }
+});
 
 // --- Additional Endpoints to make the Tele-Derma AI Platform Fully Functional ---
 
