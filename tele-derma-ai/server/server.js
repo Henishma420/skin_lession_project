@@ -125,7 +125,7 @@ app.post('/api/analyze-skin', upload.single('image'), async (req, res) => {
 app.get('/api/doctors', async (req, res) => {
   try {
     const [doctors] = await db.query(`
-      SELECT d.id, u.name, d.specialty, d.rating, d.experience_years, d.availability, d.consultation_type 
+      SELECT d.id, u.name, d.specialty, d.skin_type_focus, d.rating, d.experience_years, d.availability, d.consultation_type 
       FROM doctors d 
       JOIN users u ON d.id = u.id
     `);
@@ -542,6 +542,7 @@ app.get('/api/doctor/patients', authMiddleware, async (req, res) => {
         p.id, 
         p.name, 
         p.email,
+        p.blood_type,
         (SELECT MAX(date) FROM appointments WHERE patient_id = p.id AND doctor_id = ? AND status = 'completed') AS lastConsultation,
         (SELECT COUNT(*) FROM analyses WHERE patient_id = p.id) AS reportsCount,
         (SELECT MIN(date) FROM appointments WHERE patient_id = p.id AND doctor_id = ? AND date >= ? AND status != 'cancelled') AS upcomingAppointment
@@ -576,7 +577,7 @@ app.get('/api/doctor/patients/:patientId', authMiddleware, async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to view this patient.' });
     }
 
-    const [patient] = await db.query('SELECT id, name, email FROM users WHERE id = ?', [patientId]);
+    const [patient] = await db.query('SELECT id, name, email, blood_type FROM users WHERE id = ?', [patientId]);
     const [appts] = await db.query(
       'SELECT * FROM appointments WHERE patient_id = ? AND doctor_id = ? ORDER BY date DESC, time DESC', 
       [patientId, doctorId]
@@ -691,6 +692,64 @@ app.post('/api/appointments/:id/complete', authMiddleware, async (req, res) => {
       console.log('✅ Database migration: consultation_notes column verified.');
     } catch (e) {
       if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+    }
+
+    // 3. Alter users table to add blood_type column
+    try {
+      await db.query(`ALTER TABLE users ADD COLUMN blood_type VARCHAR(10) NULL DEFAULT 'O+'`);
+      console.log('✅ Database migration: blood_type column verified in users.');
+    } catch (e) {
+      if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+    }
+
+    // 4. Alter doctors table to add skin_type_focus column
+    try {
+      await db.query(`ALTER TABLE doctors ADD COLUMN skin_type_focus VARCHAR(100) NULL DEFAULT 'General Dermatology'`);
+      console.log('✅ Database migration: skin_type_focus column verified in doctors.');
+    } catch (e) {
+      if (e.code !== 'ER_DUP_FIELDNAME') throw e;
+    }
+
+    // 5. Seed and update doctors with specific skin-type specialisations
+    try {
+      const seedDoctorsUsers = [
+        [201, 'Dr. Priya Sharma', 'priya.sharma@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'],
+        [202, 'Dr. Rahul Menon', 'rahul.menon@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'],
+        [205, 'Dr. Ananya Iyer', 'ananya.iyer@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'],
+        [206, 'Dr. Vikram Rao', 'vikram.rao@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'],
+        [207, 'Dr. Sneha Patel', 'sneha.patel@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'],
+        [208, 'Dr. Arjun Das', 'arjun.das@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor']
+      ];
+
+      for (const u of seedDoctorsUsers) {
+        await db.query(`INSERT IGNORE INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)`, u);
+      }
+
+      const doctorProfiles = [
+        [201, 'Melanoma & High-Risk Lesions', 'Melanoma', 4.8, 8, 'Available Today', 'In-Person Consultation'],
+        [202, 'Melanocytic Nevi & Mole Specialist', 'Melanocytic Nevus', 4.9, 12, 'Available Tomorrow', 'Online Consultation'],
+        [205, 'Basal Cell Carcinoma Specialist', 'Basal Cell Carcinoma', 4.9, 10, 'Available Today', 'Online Consultation'],
+        [206, 'Actinic Keratosis & Precancerous Lesions', 'Actinic Keratosis', 4.7, 7, 'Available Today', 'In-Person Consultation'],
+        [207, 'Vascular Lesions & Angioma Specialist', 'Vascular Lesion', 4.8, 9, 'Available Tomorrow', 'Online Consultation'],
+        [208, 'Benign Keratosis & Dermatofibroma Specialist', 'Benign Keratosis', 4.9, 14, 'Available Today', 'In-Person Consultation']
+      ];
+
+      for (const doc of doctorProfiles) {
+        await db.query(`
+          INSERT INTO doctors (id, specialty, skin_type_focus, rating, experience_years, availability, consultation_type)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+          ON DUPLICATE KEY UPDATE 
+            specialty = VALUES(specialty), 
+            skin_type_focus = VALUES(skin_type_focus),
+            rating = VALUES(rating),
+            experience_years = VALUES(experience_years),
+            availability = VALUES(availability),
+            consultation_type = VALUES(consultation_type)
+        `, doc);
+      }
+      console.log('✅ Skin-type specific doctors verified and seeded.');
+    } catch (docErr) {
+      console.warn('⚠️ Skin-type doctor seeding notice:', docErr.message);
     }
   } catch (err) {
     console.error('❌ Database migration error:', err.message);

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(100) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   role ENUM('patient', 'doctor') NOT NULL DEFAULT 'patient',
+  blood_type VARCHAR(10) NULL DEFAULT 'O+',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS doctors (
   id INT PRIMARY KEY,
   specialty VARCHAR(100) NOT NULL DEFAULT 'Dermatologist',
+  skin_type_focus VARCHAR(100) NULL DEFAULT 'General Dermatology',
   rating DECIMAL(3, 2) NOT NULL DEFAULT 5.00,
   experience_years INT NOT NULL DEFAULT 0,
   availability VARCHAR(100) NOT NULL DEFAULT 'Available Today',
@@ -62,13 +64,28 @@ CREATE TABLE IF NOT EXISTS reports (
   FOREIGN KEY (doctor_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Seed Doctors as referenced in the PDF:
+-- Seed Doctors specializing in specific skin types:
 -- First create their user accounts (passwords are hashed 'password123' using bcrypt)
 INSERT IGNORE INTO users (id, name, email, password, role) VALUES 
 (201, 'Dr. Priya Sharma', 'priya.sharma@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'),
-(202, 'Dr. Rahul Menon', 'rahul.menon@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor');
+(202, 'Dr. Rahul Menon', 'rahul.menon@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'),
+(205, 'Dr. Ananya Iyer', 'ananya.iyer@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'),
+(206, 'Dr. Vikram Rao', 'vikram.rao@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'),
+(207, 'Dr. Sneha Patel', 'sneha.patel@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor'),
+(208, 'Dr. Arjun Das', 'arjun.das@telederma.com', '$2a$10$iKpxp7K0d8t2q4KkEqhNvuB05oHh7P6gZ2F2D0aBfO/eBwFzFj/9q', 'doctor');
 
--- Insert their doctor profiles
-INSERT IGNORE INTO doctors (id, specialty, rating, experience_years, availability, consultation_type) VALUES 
-(201, 'Dermatologist', 4.8, 8, 'Available Today', 'In-Person Consultation'),
-(202, 'Dermatologist', 4.9, 12, 'Available Tomorrow', 'Online Consultation');
+-- Insert or update their doctor profiles with specific skin type specialisations
+INSERT INTO doctors (id, specialty, skin_type_focus, rating, experience_years, availability, consultation_type) VALUES 
+(201, 'Melanoma & High-Risk Lesions', 'Melanoma', 4.8, 8, 'Available Today', 'In-Person Consultation'),
+(202, 'Melanocytic Nevi & Mole Specialist', 'Melanocytic Nevus', 4.9, 12, 'Available Tomorrow', 'Online Consultation'),
+(205, 'Basal Cell Carcinoma Specialist', 'Basal Cell Carcinoma', 4.9, 10, 'Available Today', 'Online Consultation'),
+(206, 'Actinic Keratosis & Precancerous Lesions', 'Actinic Keratosis', 4.7, 7, 'Available Today', 'In-Person Consultation'),
+(207, 'Vascular Lesions & Angioma Specialist', 'Vascular Lesion', 4.8, 9, 'Available Tomorrow', 'Online Consultation'),
+(208, 'Benign Keratosis & Dermatofibroma Specialist', 'Benign Keratosis', 4.9, 14, 'Available Today', 'In-Person Consultation')
+ON DUPLICATE KEY UPDATE 
+  specialty = VALUES(specialty), 
+  skin_type_focus = VALUES(skin_type_focus),
+  rating = VALUES(rating),
+  experience_years = VALUES(experience_years),
+  availability = VALUES(availability),
+  consultation_type = VALUES(consultation_type);

@@ -27,7 +27,7 @@ const authMiddleware = async (req, res, next) => {
 // @route   POST /api/auth/register
 // @desc    Register a user (Patient or Doctor)
 router.post('/register', async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, bloodType, specialty, skinTypeFocus } = req.body;
 
   // Validation
   if (!name || !email || !password) {
@@ -35,6 +35,7 @@ router.post('/register', async (req, res) => {
   }
 
   const userRole = role === 'doctor' ? 'doctor' : 'patient';
+  const patientBloodType = userRole === 'patient' ? (bloodType || 'O+') : null;
 
   try {
     // Check if user exists
@@ -47,18 +48,20 @@ router.post('/register', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Insert user
+    // Insert user with blood_type
     const [result] = await db.query(
-      'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-      [name, email, hashedPassword, userRole]
+      'INSERT INTO users (name, email, password, role, blood_type) VALUES (?, ?, ?, ?, ?)',
+      [name, email, hashedPassword, userRole, patientBloodType]
     );
     const userId = result.insertId;
 
-    // If role is doctor, create default profile
+    // If role is doctor, create doctor profile with skin type specialisation
     if (userRole === 'doctor') {
+      const docSpecialty = specialty || 'Dermatologist';
+      const docSkinFocus = skinTypeFocus || 'General Dermatology';
       await db.query(
-        'INSERT INTO doctors (id, specialty, rating, experience_years, availability, consultation_type) VALUES (?, ?, ?, ?, ?, ?)',
-        [userId, 'Dermatologist', 5.0, 0, 'Available Today', 'Online Consultation']
+        'INSERT INTO doctors (id, specialty, skin_type_focus, rating, experience_years, availability, consultation_type) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [userId, docSpecialty, docSkinFocus, 5.0, 0, 'Available Today', 'Online Consultation']
       );
     }
 
@@ -71,7 +74,8 @@ router.post('/register', async (req, res) => {
         id: userId,
         name,
         email,
-        role: userRole
+        role: userRole,
+        blood_type: patientBloodType
       }
     });
 
@@ -114,7 +118,8 @@ router.post('/login', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        blood_type: user.blood_type || 'O+'
       }
     });
 
@@ -128,7 +133,7 @@ router.post('/login', async (req, res) => {
 // @desc    Get current user profile
 router.get('/me', authMiddleware, async (req, res) => {
   try {
-    const [users] = await db.query('SELECT id, name, email, role, created_at FROM users WHERE id = ?', [req.user.id]);
+    const [users] = await db.query('SELECT id, name, email, role, blood_type, created_at FROM users WHERE id = ?', [req.user.id]);
     if (users.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -137,7 +142,7 @@ router.get('/me', authMiddleware, async (req, res) => {
     
     // If doctor, fetch profile details as well
     if (user.role === 'doctor') {
-      const [doctors] = await db.query('SELECT specialty, rating, experience_years, availability, consultation_type FROM doctors WHERE id = ?', [user.id]);
+      const [doctors] = await db.query('SELECT specialty, skin_type_focus, rating, experience_years, availability, consultation_type FROM doctors WHERE id = ?', [user.id]);
       if (doctors.length > 0) {
         user.profile = doctors[0];
       }
@@ -153,7 +158,7 @@ router.get('/me', authMiddleware, async (req, res) => {
 // @route   PUT /api/auth/profile
 // @desc    Update user profile details
 router.put('/profile', authMiddleware, async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, bloodType, specialty, skinTypeFocus } = req.body;
 
   if (!name || !email) {
     return res.status(400).json({ message: 'Name and email are required' });
@@ -166,26 +171,34 @@ router.put('/profile', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'A user with this email already exists' });
     }
 
-    let query = 'UPDATE users SET name = ?, email = ? WHERE id = ?';
-    let params = [name, email, req.user.id];
+    let query = 'UPDATE users SET name = ?, email = ?, blood_type = COALESCE(?, blood_type) WHERE id = ?';
+    let params = [name, email, bloodType || null, req.user.id];
 
     // If password is provided, hash and update it too
     if (password && password.trim() !== '') {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      query = 'UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?';
-      params = [name, email, hashedPassword, req.user.id];
+      query = 'UPDATE users SET name = ?, email = ?, password = ?, blood_type = COALESCE(?, blood_type) WHERE id = ?';
+      params = [name, email, hashedPassword, bloodType || null, req.user.id];
     }
 
     await db.query(query, params);
 
+    // If doctor and specialty / skinTypeFocus is updated
+    if (specialty || skinTypeFocus) {
+      await db.query(
+        'UPDATE doctors SET specialty = COALESCE(?, specialty), skin_type_focus = COALESCE(?, skin_type_focus) WHERE id = ?',
+        [specialty || null, skinTypeFocus || null, req.user.id]
+      );
+    }
+
     // Fetch the updated user details
-    const [users] = await db.query('SELECT id, name, email, role, created_at FROM users WHERE id = ?', [req.user.id]);
+    const [users] = await db.query('SELECT id, name, email, role, blood_type, created_at FROM users WHERE id = ?', [req.user.id]);
     const updatedUser = users[0];
 
     // If doctor, fetch profile details as well
     if (updatedUser.role === 'doctor') {
-      const [doctors] = await db.query('SELECT specialty, rating, experience_years, availability, consultation_type FROM doctors WHERE id = ?', [updatedUser.id]);
+      const [doctors] = await db.query('SELECT specialty, skin_type_focus, rating, experience_years, availability, consultation_type FROM doctors WHERE id = ?', [updatedUser.id]);
       if (doctors.length > 0) {
         updatedUser.profile = doctors[0];
       }

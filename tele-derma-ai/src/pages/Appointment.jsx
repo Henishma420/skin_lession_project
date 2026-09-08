@@ -38,6 +38,7 @@ const Appointment = () => {
   // Route Params
   const queryDoctorId = searchParams.get('doctorId');
   const queryDoctorName = searchParams.get('doctorName');
+  const querySkinType = searchParams.get('skinType');
 
   // Form states
   const [doctors, setDoctors] = useState([]);
@@ -61,9 +62,23 @@ const Appointment = () => {
     const fetchDoctors = async () => {
       try {
         const response = await axios.get(`${API_URL}/doctors`);
-        setDoctors(response.data);
-        if (!queryDoctorId && response.data.length > 0) {
-          setSelectedDoctorId(String(response.data[0].id));
+        const list = response.data;
+        setDoctors(list);
+        
+        if (queryDoctorId) {
+          setSelectedDoctorId(String(queryDoctorId));
+        } else if (querySkinType && list.length > 0) {
+          const match = list.find(d => 
+            (d.skin_type_focus && d.skin_type_focus.toLowerCase().includes(querySkinType.toLowerCase())) ||
+            (d.specialty && d.specialty.toLowerCase().includes(querySkinType.toLowerCase()))
+          );
+          if (match) {
+            setSelectedDoctorId(String(match.id));
+          } else {
+            setSelectedDoctorId(String(list[0].id));
+          }
+        } else if (list.length > 0) {
+          setSelectedDoctorId(String(list[0].id));
         }
       } catch (error) {
         console.error('Failed to load doctors list:', error);
@@ -73,7 +88,7 @@ const Appointment = () => {
     };
 
     fetchDoctors();
-  }, [API_URL, queryDoctorId]);
+  }, [API_URL, queryDoctorId, querySkinType]);
 
   // Load already booked slots when selected doctor or date changes
   useEffect(() => {
@@ -359,13 +374,13 @@ const Appointment = () => {
 
             {/* Doctor Select */}
             <div className="form-group-custom">
-              <label>Select Dermatologist</label>
+              <label>Select Dermatologist Specialist</label>
               {queryDoctorId && queryDoctorName ? (
                 <div className="static-doctor-box">
                   <FaUserMd className="doc-avatar-small" />
                   <div>
                     <strong>{queryDoctorName}</strong>
-                    <span>(Dermatologist)</span>
+                    <span>({selectedDoctor?.specialty || 'Dermatologist'} • Focus: {selectedDoctor?.skin_type_focus || 'Skin Specialist'})</span>
                   </div>
                 </div>
               ) : (
@@ -378,9 +393,11 @@ const Appointment = () => {
                   className="custom-select"
                   required
                 >
-                  <option value="" disabled>-- Select a Dermatologist --</option>
+                  <option value="" disabled>-- Select a Dermatologist Specialist --</option>
                   {doctors.map(doc => (
-                    <option key={doc.id} value={doc.id}>{doc.name} - {doc.specialty}</option>
+                    <option key={doc.id} value={doc.id}>
+                      {doc.name} — {doc.specialty} [Focus: {doc.skin_type_focus || 'General Dermatology'}]
+                    </option>
                   ))}
                 </select>
               )}
@@ -397,6 +414,10 @@ const Appointment = () => {
                   <div>
                     <strong>{selectedDoctor.name}</strong>
                     <div className="doc-meta-pills">
+                      <span style={{ color: '#00d2ff', fontWeight: 600 }}>
+                        Focus: {selectedDoctor.skin_type_focus || 'General Dermatology'}
+                      </span>
+                      <span>•</span>
                       <span>Experience: {selectedDoctor.experience_years} years</span>
                       <span>•</span>
                       <span>Consultation: ₹{selectedDoctor.experience_years > 10 ? '700' : '500'}</span>

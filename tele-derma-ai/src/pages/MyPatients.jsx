@@ -86,7 +86,20 @@ const MyPatients = () => {
               <div className="patient-card-header">
                 <FaUserCircle className="patient-avatar" />
                 <div className="patient-meta">
-                  <h3>{pat.name}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3>{pat.name}</h3>
+                    <span style={{ 
+                      fontSize: '0.75rem', 
+                      background: 'rgba(239, 68, 68, 0.15)', 
+                      color: '#f87171', 
+                      border: '1px solid rgba(239, 68, 68, 0.3)', 
+                      padding: '0.1rem 0.4rem', 
+                      borderRadius: '4px',
+                      fontWeight: 'bold' 
+                    }}>
+                      {pat.blood_type || 'O+'}
+                    </span>
+                  </div>
                   <span className="patient-email-sub">{pat.email}</span>
                 </div>
               </div>

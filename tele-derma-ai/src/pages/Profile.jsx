@@ -12,7 +12,9 @@ import {
   FaCheckCircle, 
   FaExclamationTriangle,
   FaUserMd,
-  FaClock 
+  FaClock,
+  FaTint,
+  FaStethoscope
 } from 'react-icons/fa';
 import './Profile.css';
 
@@ -25,6 +27,9 @@ const Profile = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [bloodType, setBloodType] = useState('O+');
+  const [specialty, setSpecialty] = useState('');
+  const [skinTypeFocus, setSkinTypeFocus] = useState('');
 
   // Status States
   const [isSaving, setIsSaving] = useState(false);
@@ -35,6 +40,9 @@ const Profile = () => {
     if (user) {
       setName(user.name || '');
       setEmail(user.email || '');
+      setBloodType(user.blood_type || 'O+');
+      setSpecialty(user.profile?.specialty || 'Dermatologist');
+      setSkinTypeFocus(user.profile?.skin_type_focus || 'General Dermatology');
     }
   }, [user]);
 
@@ -46,6 +54,9 @@ const Profile = () => {
     if (user) {
       setName(user.name || '');
       setEmail(user.email || '');
+      setBloodType(user.blood_type || 'O+');
+      setSpecialty(user.profile?.specialty || 'Dermatologist');
+      setSkinTypeFocus(user.profile?.skin_type_focus || 'General Dermatology');
     }
   };
 
@@ -69,7 +80,10 @@ const Profile = () => {
       const response = await axios.put(`${API_URL}/auth/profile`, {
         name,
         email,
-        password: password || undefined
+        password: password || undefined,
+        bloodType: user.role === 'patient' ? bloodType : undefined,
+        specialty: user.role === 'doctor' ? specialty : undefined,
+        skinTypeFocus: user.role === 'doctor' ? skinTypeFocus : undefined
       });
 
       // Update global user context state
@@ -122,6 +136,27 @@ const Profile = () => {
                 <div className="row-val">{user?.email}</div>
               </div>
 
+              {user?.role === 'patient' && (
+                <div className="profile-detail-row">
+                  <div className="row-lbl">
+                    <FaTint className="text-danger" />
+                    <span>Blood Type</span>
+                  </div>
+                  <div className="row-val">
+                    <span style={{ 
+                      background: 'rgba(239, 68, 68, 0.15)', 
+                      color: '#f87171', 
+                      border: '1px solid rgba(239, 68, 68, 0.3)', 
+                      padding: '0.2rem 0.6rem', 
+                      borderRadius: '6px', 
+                      fontWeight: 'bold' 
+                    }}>
+                      {user?.blood_type || 'O+'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {user?.role === 'doctor' && (
                 <>
                   <div className="profile-detail-row">
@@ -129,7 +164,26 @@ const Profile = () => {
                       <FaUserMd />
                       <span>Specialization</span>
                     </div>
-                    <div className="row-val">Dermatologist</div>
+                    <div className="row-val">{user?.profile?.specialty || 'Dermatologist'}</div>
+                  </div>
+
+                  <div className="profile-detail-row">
+                    <div className="row-lbl">
+                      <FaStethoscope className="text-primary" />
+                      <span>Skin Type Focus</span>
+                    </div>
+                    <div className="row-val">
+                      <span style={{ 
+                        background: 'rgba(59, 130, 246, 0.15)', 
+                        color: '#60a5fa', 
+                        border: '1px solid rgba(59, 130, 246, 0.3)', 
+                        padding: '0.2rem 0.6rem', 
+                        borderRadius: '6px', 
+                        fontWeight: 'bold' 
+                      }}>
+                        {user?.profile?.skin_type_focus || 'General Dermatology'}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="profile-detail-row">
@@ -203,6 +257,85 @@ const Profile = () => {
                   />
                 </div>
               </div>
+
+              {user?.role === 'patient' && (
+                <div className="form-group-profile">
+                  <label htmlFor="bloodType">Blood Group / Type</label>
+                  <div className="input-with-icon-profile">
+                    <FaTint className="input-icon-profile text-danger" />
+                    <select 
+                      id="bloodType" 
+                      value={bloodType} 
+                      onChange={(e) => setBloodType(e.target.value)} 
+                      disabled={isSaving}
+                      style={{ width: '100%', background: 'transparent', border: 'none', color: '#fff', padding: '0.6rem 0.5rem', outline: 'none' }}
+                    >
+                      <option value="O+" style={{ background: '#111827' }}>O+ (O Positive)</option>
+                      <option value="O-" style={{ background: '#111827' }}>O- (O Negative)</option>
+                      <option value="A+" style={{ background: '#111827' }}>A+ (A Positive)</option>
+                      <option value="A-" style={{ background: '#111827' }}>A- (A Negative)</option>
+                      <option value="B+" style={{ background: '#111827' }}>B+ (B Positive)</option>
+                      <option value="B-" style={{ background: '#111827' }}>B- (B Negative)</option>
+                      <option value="AB+" style={{ background: '#111827' }}>AB+ (AB Positive)</option>
+                      <option value="AB-" style={{ background: '#111827' }}>AB- (AB Negative)</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {user?.role === 'doctor' && (
+                <>
+                  <div className="form-group-profile">
+                    <label htmlFor="skinTypeFocus">Skin Type Specialisation</label>
+                    <div className="input-with-icon-profile">
+                      <FaStethoscope className="input-icon-profile text-primary" />
+                      <select 
+                        id="skinTypeFocus" 
+                        value={skinTypeFocus} 
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setSkinTypeFocus(val);
+                          const titleMap = {
+                            'Melanoma': 'Melanoma & High-Risk Lesions',
+                            'Melanocytic Nevus': 'Melanocytic Nevi & Mole Specialist',
+                            'Basal Cell Carcinoma': 'Basal Cell Carcinoma Specialist',
+                            'Actinic Keratosis': 'Actinic Keratosis & Precancerous Lesions',
+                            'Vascular Lesion': 'Vascular Lesions & Angioma Specialist',
+                            'Benign Keratosis': 'Benign Keratosis & Dermatofibroma Specialist',
+                            'General Dermatology': 'General Dermatology & Sensitive Skin'
+                          };
+                          setSpecialty(titleMap[val] || `${val} Specialist`);
+                        }} 
+                        disabled={isSaving}
+                        style={{ width: '100%', background: 'transparent', border: 'none', color: '#fff', padding: '0.6rem 0.5rem', outline: 'none' }}
+                      >
+                        <option value="Melanoma" style={{ background: '#111827' }}>Melanoma & High-Risk Lesions</option>
+                        <option value="Melanocytic Nevus" style={{ background: '#111827' }}>Melanocytic Nevi & Moles</option>
+                        <option value="Basal Cell Carcinoma" style={{ background: '#111827' }}>Basal Cell Carcinoma</option>
+                        <option value="Actinic Keratosis" style={{ background: '#111827' }}>Actinic Keratosis & Precancerous</option>
+                        <option value="Vascular Lesion" style={{ background: '#111827' }}>Vascular Lesions & Angioma</option>
+                        <option value="Benign Keratosis" style={{ background: '#111827' }}>Benign Keratosis & Dermatofibroma</option>
+                        <option value="General Dermatology" style={{ background: '#111827' }}>General Dermatology & Sensitive Skin</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-group-profile">
+                    <label htmlFor="specialty">Specialization Title</label>
+                    <div className="input-with-icon-profile">
+                      <FaUserMd className="input-icon-profile" />
+                      <input 
+                        type="text" 
+                        id="specialty" 
+                        value={specialty} 
+                        onChange={(e) => setSpecialty(e.target.value)} 
+                        disabled={isSaving}
+                        placeholder="e.g. Melanoma Specialist"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div className="form-group-profile">
                 <label htmlFor="password">New Password (leave blank to keep current)</label>

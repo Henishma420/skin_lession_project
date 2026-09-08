@@ -270,6 +270,37 @@ const SkinConditionDetails = () => {
         </section>
       )}
 
+      {/* Consult Specialist CTA for this specific skin condition */}
+      <section className="consult-specialist-cta glass-card" style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '1.5rem',
+        padding: '1.8rem',
+        margin: '2rem 0',
+        background: 'linear-gradient(135deg, rgba(0, 210, 255, 0.08), rgba(59, 130, 246, 0.12))',
+        border: '1px solid rgba(0, 210, 255, 0.3)',
+        borderRadius: '16px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: '260px' }}>
+          <FaStethoscope className="text-primary" size={32} />
+          <div>
+            <h3 style={{ margin: '0 0 0.4rem 0', color: '#fff' }}>Need a {condition.name} Specialist?</h3>
+            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+              Connect with dermatologists specifically experienced in diagnosing and managing {condition.name}.
+            </p>
+          </div>
+        </div>
+        <button 
+          className="btn-primary"
+          onClick={() => navigate(`/doctors?skinType=${encodeURIComponent(condition.name)}`)}
+          style={{ whiteSpace: 'nowrap' }}
+        >
+          <span>Find {condition.name} Specialists &rarr;</span>
+        </button>
+      </section>
+
       {/* AI Analysis Integration CTA */}
       <section className="ai-analysis-cta-box glass-card">
         <div className="cta-left-content">

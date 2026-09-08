@@ -290,6 +290,39 @@ const AIAnalysis = () => {
                   <div className="grad-cam-heatmap"></div>
                 </div>
               </div>
+
+              {/* Doctor Consultation Recommendation for this specific skin type */}
+              <div className="specialist-recommendation-card" style={{
+                marginTop: '1.2rem',
+                padding: '1.2rem',
+                background: 'rgba(0, 210, 255, 0.08)',
+                border: '1px solid rgba(0, 210, 255, 0.25)',
+                borderRadius: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.8rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <FaStethoscope className="text-primary" size={20} />
+                  <div>
+                    <h4 style={{ margin: 0, color: '#fff', fontSize: '1rem' }}>Recommended Specialist Consultation</h4>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                      Consult a doctor specializing in <strong>{result.prediction.replace(' (High Risk)', '')}</strong> for clinical confirmation.
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  className="btn-primary w-100 flex-center"
+                  onClick={() => {
+                    const skinType = result.prediction.replace(' (High Risk)', '').trim();
+                    navigate(`/doctors?skinType=${encodeURIComponent(skinType)}`);
+                  }}
+                  style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}
+                >
+                  <FaStethoscope />
+                  <span>Consult {result.prediction.replace(' (High Risk)', '')} Specialist</span>
+                </button>
+              </div>
             </div>
           )}
 

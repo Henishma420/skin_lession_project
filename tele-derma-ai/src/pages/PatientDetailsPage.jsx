@@ -92,6 +92,8 @@ const PatientDetailsPage = () => {
               <div className="demographics-row">
                 <span><strong>Email:</strong> {profile.email}</span>
                 <span>•</span>
+                <span><strong>Blood Type:</strong> <span style={{ color: '#f87171', fontWeight: 'bold' }}>{profile.blood_type || 'O+'}</span></span>
+                <span>•</span>
                 <span><strong>Age:</strong> Not provided</span>
                 <span>•</span>
                 <span><strong>Gender:</strong> Not provided</span>
@@ -145,6 +147,7 @@ const PatientDetailsPage = () => {
                   <ul>
                     <li><strong>Full Name:</strong> {profile.name}</li>
                     <li><strong>Registered Email:</strong> {profile.email}</li>
+                    <li><strong>Blood Type:</strong> <span style={{ color: '#f87171', fontWeight: 'bold' }}>{profile.blood_type || 'O+'}</span></li>
                     <li><strong>Profile Status:</strong> Active Patient</li>
                     <li><strong>Onboard Date:</strong> August 2026</li>
                   </ul>
